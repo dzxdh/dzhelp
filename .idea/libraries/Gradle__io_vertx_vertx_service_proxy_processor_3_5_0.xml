@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: io.vertx:vertx-service-proxy:processor:3.5.0">
+    <CLASSES>
+      <root url="jar://D:/development/gradle-3.3-all/gradle-3.3/caches/modules-2/files-2.1/io.vertx/vertx-service-proxy/3.5.0/82618c7e6e0144f3a6aa31b0231929117c6d41e/vertx-service-proxy-3.5.0-processor.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://D:/development/gradle-3.3-all/gradle-3.3/caches/modules-2/files-2.1/io.vertx/vertx-service-proxy/3.5.0/788748353088aedfae128480319ab9e1f2aeb16c/vertx-service-proxy-3.5.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
