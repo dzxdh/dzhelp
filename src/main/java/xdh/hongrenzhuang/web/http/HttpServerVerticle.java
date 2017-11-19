@@ -9,10 +9,12 @@ import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.CorsHandler;
 import io.vertx.ext.web.handler.StaticHandler;
+import io.vertx.serviceproxy.ServiceProxyBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import xdh.hongrenzhuang.web.mongodb.SomeDatabaseService;
-import xdh.hongrenzhuang.web.service.SomeService;
+import xdh.hongrenzhuang.web.mongodb.userMongoService.UserMongoService;
+import xdh.hongrenzhuang.web.service.ProductService;
+import xdh.hongrenzhuang.web.service.UserService;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -21,18 +23,33 @@ import java.util.Set;
  * Created by ironresolve on 2017/11/17.
  */
 public class HttpServerVerticle extends AbstractVerticle {
+    //redis的address
+    public static final String ADDRESS_REDIS_USER = "user.redis";
+    public static final String ADDRESS_REDIS_PRODUCT = "product.redis";
+    //webclient 的 address
+    public static final String ADDRESS_WEBCLIENT_WX = "wx.webclient";
+    //mysql 的address
+    public static final String ADDRESS_MYSQL_USER = "user.mysql";
+    public static final String ADDRESS_MYSQL_PRODUCT = "product.mysql";
+    //mongo 的address
+    public static final String ADDRESS_MONGO_USER = "user.mongo";
+
+
+
     public static final String CONFIG_HTTP_SERVER_PORT = "http.server.port";
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpServerVerticle.class);
     private HttpServer server;
     private Router router;
-    private SomeDatabaseService someDatabaseService;
     @Override
     public void start(Future<Void> startFuture) throws Exception {
 
-        someDatabaseService = SomeDatabaseService.createProxy(vertx, "database-service-address");
-        SomeService someService = new SomeService(vertx,someDatabaseService);
+        //service 的类
+        UserService userService = new UserService(vertx);
+        ProductService productService = new ProductService(vertx);
 
+        //httpServer
         HttpServer server = vertx.createHttpServer();
+
         router = Router.router(vertx);
         Set<String> allowHeaders = new HashSet<>();
         allowHeaders.add("x-requested-with");
@@ -51,8 +68,10 @@ public class HttpServerVerticle extends AbstractVerticle {
         router.route("/static/*").handler(StaticHandler.create());
         //路由
         router.route("/").handler(this::indexHandler);
-        router.route("/save").handler(someService::saveHandler);
-        router.route("/find").handler(someService::findHandler);
+        router.route("/save").handler(userService::saveHandler);
+        router.route("/create").handler(userService::createHandler);
+
+
 
         int portNumber = config().getInteger(CONFIG_HTTP_SERVER_PORT, 8080);
         server
